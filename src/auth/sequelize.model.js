@@ -10,5 +10,5 @@ const usersModel = users(sequelize, DataTypes);
 
 module.exports = {
   sequelize: sequelize,
-  Users: Users,
+  User: usersModel,
 }

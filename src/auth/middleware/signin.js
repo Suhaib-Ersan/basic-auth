@@ -1,9 +1,12 @@
 "use strict";
-const bcrypt = require("bcrypt");
 const base64 = require("base-64");
-const { Users, sequelize } = require("./auth/sequelize.model.js")
+const { User } = require("../sequelize.model.js");
 
-module.exports = (req, res, next) => {
+module.exports = async (req, res, next) => {
+  if (!req.headers.authorization) {
+    return Error();
+  }
+
   /*
     req.headers.authorization is : "Basic sdkjdsljd="
     To get username and password from this, take the following steps:
@@ -27,9 +30,8 @@ module.exports = (req, res, next) => {
         3. Either we're valid or we throw an error
       */
   try {
-    const user = await Users.findOne({ where: { username: username } });
-    const valid = await bcrypt.compare(password, user.password);
-    if (valid) {
+    const user = await User.authenticateBasic(username, password);
+    if (user) {
       req.user = user;
       next();
     } else {

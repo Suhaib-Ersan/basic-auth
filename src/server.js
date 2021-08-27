@@ -7,19 +7,16 @@ const server = express();
 
 
 // Prepare the express server
-
-
+const notFoundHandler = require("./auth/error-handlers/404.js")
+const internalServerErrorHandler = require("./auth/error-handlers/500.js")
 
 // routes
-const signUpRoute = require("./routes/signup.js");
-const signInRoute = require("./routes/signin.js");
+const routes = require("./routes/routes.js");
 
 // Process JSON input and put the data on req.body
 server.use(express.json());
 
-server.use(signUpRoute);
-server.use(signInRoute);
-
+server.use(routes);
 
 // Process FORM input and put the data on req.body
 server.use(express.urlencoded({ extended: true }));
@@ -42,7 +39,8 @@ server.use(express.urlencoded({ extended: true }));
 
 
 // make sure our tables are created, start up the HTTP server.
-
+server.use("*", notFoundHandler);
+server.use(internalServerErrorHandler);
 
 module.exports = {
   server,
